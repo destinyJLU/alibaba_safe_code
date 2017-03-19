@@ -1,0 +1,14 @@
+SELECT id,cast(label as int) as label,
+if((content like '%裙%' and content not like '%裙子%') or content like '%群%' or content like '%頵%' or content like '%qun%' or content like '%君羊%'or content like '%輑%' or content like '%郡%' or content like '%峮%',1,0) as QUN,
+if(content like '%+%' or content like '%╋%' or content like '%加%',1,0) as P,
+if(content like '%WX%' or content like '%wx%' or content like '%微信%' or content like '%徽信%' or content like '%威信%' or content like '%薇信%' or content like '%维信%' or content like '%W信%' or content like '%w信%',1,0) as WX,
+if(content like '%q%' or content like '%Q%' or content like '%扣%' or content like '%秋秋%' or content like '%企鹅%' or content like '%咸鱼%' or content like '%闲鱼%',1,0) as QQ,
+if(content like '%令%' or content like '%领%' or content like '%内部%' or content like '%卷%' or content like '%券%' or content like '%惠%' or content like '%折%' or content like '%偗%',1,0) as DISCOUNT,
+regexp_count(content,'[[:alnum:]]{6}') as BEST_F,
+regexp_count(content,'[[:digit:]{1}]') as NUM,
+length(content) as LEN,
+regexp_count(content,'[[:punct:]]{1}') as WH,
+regexp_count(content,'[[:blank:]]{1}') as BLANK,regexp_count(content,'[[:upper:]]{1}') as UP,regexp_count(content,'[[:lower:]]{1}') as LOW,
+if(content like '%①%' or content like '%②%' or content like '%③%' or content like '%④%' or content like '%⑤%' or content like '%⑥%' or content like '%⑦%' or content like '%⑧%' or content like '%⑨%',1,0) as NUM_2,
+if(content like '%cm%' or content like '%kg%' or content like '%斤%' or content like '%厘米%' or content like '%体重%' or content like '%身高%',1,0) as SGTZ
+FROM ${t1}

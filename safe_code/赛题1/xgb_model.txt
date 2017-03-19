@@ -1,0 +1,47 @@
+drop table if exists destiny_xgb_pred;
+drop OFFLINEMODEL if exists destiny_xgboost_1;
+-- train
+PAI
+-name xgboost
+-project algo_public
+-Deta="0.008"
+-Dobjective="binary:logistic"
+-DitemDelimiter=","
+-Dseed="0"
+-Dnum_round="1000"
+-DlabelColName="label"
+-DinputTableName="destiny_xgb_train"
+-DenableSparse="false"
+-Dmax_depth="8"
+-Dsubsample="0.4"
+-Dcolsample_bytree="0.6"
+-DmodelName="destiny_xgboost_1"
+-Dgamma="0"
+-Dlambda="50" 
+-DfeatureColNames="a_4,a_6,a_7,a_9,a_11,a_12,a_25,a_27,a_28,a_109,a_111,a_112,a_114,a_115,a_117,a_119,a_146,a_150,a_152,a_160"
+-Dbase_score="0.11"
+-Dmin_child_weight="100"
+-DkvDelimiter=":";
+
+-- predict
+PAI
+-name prediction
+-project algo_public
+-DdetailColName="prediction_detail"
+-DappendColNames="id"
+-DmodelName="destiny_xgboost_1"
+-DitemDelimiter=","
+-DresultColName="prediction_result"
+-Dlifecycle="28"
+-DoutputTableName="destiny_xgb_pred"
+-DscoreColName="prediction_score"
+-DkvDelimiter=":"
+-DfeatureColNames="a_4,a_6,a_7,a_9,a_11,a_12,a_25,a_27,a_28,a_109,a_111,a_112,a_114,a_115,a_117,a_119,a_146,a_150,a_152,a_160"
+-DinputTableName="destiny_xgb_test"
+-DenableSparse="false";
+
+drop table if exists renji_result;
+create table renji_result as select id
+from destiny_xgb_pred
+where prediction_result = 1;
+select count(*) from renji_result;

@@ -1,0 +1,20 @@
+SELECT id,
+--(regexp_count(value,'\\'))FAN_XIE,
+length(value)LEN,
+(regexp_count(tolower(value),'foo'))FOO,
+(regexp_count(tolower(value),'and'))AND_,
+(regexp_count(tolower(value),'or'))OR_,
+(regexp_count(tolower(value),'order'))ORD,
+(regexp_count(tolower(value),'select'))SEL,
+(regexp_count(tolower(value),'union'))UNI,
+(regexp_count(tolower(value),'concat'))CON,
+(regexp_count(tolower(value),'from'))FRO,
+(regexp_count(tolower(value),'where'))WHE,
+(regexp_count(tolower(value),'%'))PER,
+(regexp_count(value,'[[:digit:]{1}]'))NUM,
+--2017-2-25
+(if(value like '%+%',1,0)) as PLU,
+--2017-2-26
+(regexp_count(tolower(value),'null'))NUL,
+cast(label as int)label
+FROM ${t1};

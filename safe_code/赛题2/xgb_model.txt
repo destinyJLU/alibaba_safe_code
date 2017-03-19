@@ -1,0 +1,50 @@
+drop table if exists destiny_xgb_pred2;
+drop OFFLINEMODEL if exists destiny_xgboost_2;
+-- train
+PAI
+-name xgboost
+-project algo_public
+-Deta="0.008"
+-Dobjective="binary:logistic"
+-DitemDelimiter=","
+-Dseed="0"
+-Dnum_round="3000"
+-DlabelColName="label"
+-DinputTableName="destiny_xgb_train2"
+-DenableSparse="false"
+-Dmax_depth="8"
+-Dsubsample="0.4"
+-Dcolsample_bytree="0.6"
+-DmodelName="destiny_xgboost_2"
+-Dgamma="0"
+-Dlambda="50" 
+-DfeatureColNames="len,foo,and_,or_,ord,sel,uni,con,fro,whe,per,plu,num,nul,sg,alll,db,count_"
+-Dbase_score="0.11"
+-Dmin_child_weight="100"
+-DkvDelimiter=":";
+
+
+
+
+-- predict
+PAI
+-name prediction
+-project algo_public
+-DdetailColName="prediction_detail"
+-DappendColNames="id"
+-DmodelName="destiny_xgboost_2"
+-DitemDelimiter=","
+-DresultColName="prediction_result"
+-Dlifecycle="28"
+-DoutputTableName="destiny_xgb_pred2"
+-DscoreColName="prediction_score"
+-DkvDelimiter=":"
+-DfeatureColNames="len,foo,and_,or_,ord,sel,uni,con,fro,whe,per,plu,num,nul,sg,alll,db,count_"
+-DinputTableName="destiny_xgb_test2"
+-DenableSparse="false";
+
+drop table if exists sql_result;
+create table sql_result as select id
+from destiny_xgb_pred2
+where prediction_result = 1;
+select count(*) from sql_result;

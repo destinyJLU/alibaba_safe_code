@@ -1,0 +1,50 @@
+drop table if exists destiny_xgb_pred3;
+drop OFFLINEMODEL if exists destiny_xgboost_3;
+-- train
+PAI
+-name xgboost
+-project algo_public
+-Deta="0.008"
+-Dobjective="binary:logistic"
+-DitemDelimiter=","
+-Dseed="0"
+-Dnum_round="3000"
+-DlabelColName="label"
+-DinputTableName="destiny_xgb_train3"
+-DenableSparse="false"
+-Dmax_depth="8"
+-Dsubsample="0.4"
+-Dcolsample_bytree="0.6"
+-DmodelName="destiny_xgboost_3"
+-Dgamma="0"
+-Dlambda="50" 
+-DfeatureColNames="p,wx,qq,best_f,num,qun,len,wh,blank,up,low,discount,sgtz"
+-Dbase_score="0.11"
+-Dmin_child_weight="100"
+-DkvDelimiter=":";
+
+
+
+
+-- predict
+PAI
+-name prediction
+-project algo_public
+-DdetailColName="prediction_detail"
+-DappendColNames="id"
+-DmodelName="destiny_xgboost_3"
+-DitemDelimiter=","
+-DresultColName="prediction_result"
+-Dlifecycle="28"
+-DoutputTableName="destiny_xgb_pred3"
+-DscoreColName="prediction_score"
+-DkvDelimiter=":"
+-DfeatureColNames="p,wx,qq,best_f,num,qun,len,wh,blank,up,low,discount,sgtz"
+-DinputTableName="destiny_xgb_test3"
+-DenableSparse="false";
+
+drop table if exists shequ_result;
+create table shequ_result as select id,
+(if(prediction_result = 0,-1,1)) as label
+from destiny_xgb_pred3;
+select count(*) from shequ_result;
